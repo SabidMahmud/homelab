@@ -1,0 +1,31 @@
+# pihole-svc.yaml 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-service
+  namespace: network
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.0.53
+spec:
+#  type: LoadBalancer
+  type: NodePort
+  selector:
+    app: pihole
+  ports:
+    - name: dns-tcp
+      port: 53
+      targetPort: 53
+      protocol: TCP
+      nodePort: 30053
+    - name: dns-udp
+      port: 53
+      targetPort: 53
+      protocol: UDP
+      nodePort: 30053
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+      nodePort: 30080
+

@@ -1,0 +1,27 @@
+# PVC - Persistent Volume Claim (storage for pihole)
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pihole-etc-pvc
+  namespace: network
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pihole-dnsmasq-pvc
+  namespace: network
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

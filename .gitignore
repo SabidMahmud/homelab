@@ -1,0 +1,53 @@
+# --- KUBERNETES & K3S SENSITIVE DATA ---
+# Never upload the cluster admin config
+k3s.yaml
+kubeconfig
+config.yaml
+
+# Ignore any file explicitly labeled as a secret
+*secret.yaml
+*secrets.yaml
+*-secret.json
+
+# K3s node tokens and cluster CA certificates
+node-token
+*.crt
+*.key
+*.pem
+*.pfx
+
+# --- ENVIRONMENT & CREDENTIALS ---
+# Environment files containing API keys or DB passwords
+.env
+.env.local
+.env.*.local
+
+# SSH Keys
+id_rsa
+id_ed25519
+*.pub
+
+# --- SCRIPTS & TEMPORARY FILES ---
+# Ignore logs and temporary command outputs
+*.log
+*.tmp
+*.temp
+/scripts/output/
+
+# Bash history (in case you copy it into the folder)
+.bash_history
+.zsh_history
+
+# --- OBSIDIAN & EDITOR METADATA ---
+# Ignore Obsidian's internal workspace state (specific to your screen/session)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/

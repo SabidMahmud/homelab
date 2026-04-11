@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ganache
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ganache
+  template:
+    metadata:
+      labels:
+        app: ganache
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+      - name: ganache
+        image: trufflesuite/ganache:latest
+        env:
+        - name: GANACHE_MNEMONIC
+          valueFrom:
+            secretKeyRef:
+              name: ganache-secret
+              key: mnemonic
+        ports:
+        - containerPort: 8545
+        args:
+        - "--host=0.0.0.0"
+        - "--db=/data"
+        - "--mnemonic=$(GANACHE_MNEMONIC)"
+        volumeMounts:
+        - name: ganache-db
+          mountPath: /data
+      volumes:
+      - name: ganache-db
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ganache-service
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8545
+    targetPort: 8545
+  selector:
+    app: ganache

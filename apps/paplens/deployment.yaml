@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paplens-backend
+  labels:
+    app.kubernetes.io/name: paplens-backend
+    app.kubernetes.io/component: inference-api
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: paplens-backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: paplens-backend
+        app.kubernetes.io/component: inference-api
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/hostname: ideaserver
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: backend
+          image: ghcr.io/sabidmahmud/paplens-backend:latest@sha256:057aba96fe5883bf424932e01926bee036fd9e7e5b5f8482e4145e10b7e8b1fd
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 7860
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: paplens-config
+          resources:
+            requests:
+              cpu: 700m
+              memory: 900Mi
+            limits:
+              cpu: 2500m
+              memory: 1800Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 90
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: weights
+              mountPath: /app/weights
+            - name: cache
+              mountPath: /home/appuser/.cache
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: weights
+          persistentVolumeClaim:
+            claimName: paplens-weights
+        - name: cache
+          emptyDir:
+            sizeLimit: 512Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 512Mi

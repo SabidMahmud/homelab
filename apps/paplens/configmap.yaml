@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paplens-config
+data:
+  ALLOWED_ORIGINS: "https://paplens.sabidmahmud.me"
+  DEVICE: "cpu"
+  HF_REPO_ID: "sabidmahmud/paplens-weights"
+  INFERENCE_QUEUE_TIMEOUT_SECONDS: "60"
+  MAX_CONCURRENT_INFERENCES: "1"
+  MAX_IMAGE_PIXELS: "12000000"
+  MAX_LONG_SIDE: "4000"
+  MAX_QUEUED_INFERENCES: "1"
+  MAX_SHORT_SIDE: "3000"
+  MAX_UPLOAD_MB: "50"
+  PORT: "7860"
+  TORCH_THREADS: "2"
